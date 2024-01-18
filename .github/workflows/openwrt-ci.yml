@@ -129,6 +129,24 @@ jobs:
         echo "FIRMWARE=$PWD" >> $GITHUB_ENV
         echo "::set-output name=status::success"
 
+    - name: Prepare a unique name for Artifacts
+      id: prep_artifact_name
+      run: |
+          # Calculate a unique string which applies to the matrix entry
+          # that we can use to construct unique and valid artifact names.
+          # We achieve that by squashing runs of characters are invalid
+          # in artifact names, and also whitespace and dashes, into a
+          # single dash character.  The unique string will appear as
+          # the environment variable ARTIFACT_NAME in subsequent actions.
+          if [ "${{ matrix.container }}" != "" ] ; then
+             name="${{ matrix.container }}"
+          else
+             name="${{ matrix.os }}"
+          fi
+          # The option to enable + in sed regexps differs by OS so we avoid it
+          name=$(echo -n "$name" | sed -e 's/[ \t:\/\\"<>|*?]/-/g' -e 's/--*/-/g')
+          echo "ARTIFACT_NAME=$name" >> $GITHUB_ENV
+  
     - name: Upload firmware directory
       uses: actions/upload-artifact@main
       if: steps.organize.outputs.status == 'success' && !cancelled()
