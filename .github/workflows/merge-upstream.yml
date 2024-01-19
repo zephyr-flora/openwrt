@@ -11,7 +11,7 @@ name: Merge-upstream
 on:
   push:
     branches: 
-      - master
+      - zzq
   schedule:
     - cron: 30 19 * * *
 
@@ -31,13 +31,10 @@ jobs:
 
     - name: Set git identity
       run : |
-        git config --global user.email "KFER.Mercer@gmail.com"
-        git config --global user.name "KFERMercer"
-
-    - name: Load upstream commits
-      run: git pull https://github.com/coolsnowwolf/lede.git --no-edit --strategy-option ours
+          git config user.name zhiqiang.zhou@osr-tech.com
+          git config user.email zhiqiang.zhou@osr-tech.com
 
     - name: Push Commits
       env:
-        DOWNSTREAM_BRANCH: master
+        DOWNSTREAM_BRANCH: zzq
       run: git push origin $DOWNSTREAM_BRANCH
